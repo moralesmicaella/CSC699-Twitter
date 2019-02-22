@@ -10,6 +10,8 @@ import UIKit
 
 class HomeTableViewController: UITableViewController {
 
+    @IBOutlet var homeTableView: UITableView!
+    
     var tweetArray = [NSDictionary]()
     var numTweets: Int!
     
@@ -20,7 +22,7 @@ class HomeTableViewController: UITableViewController {
         loadTweets()
         
         myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
-        tableView.refreshControl = myRefreshControl
+        homeTableView.refreshControl = myRefreshControl
     }
     
     @objc func loadTweets() {
@@ -33,7 +35,7 @@ class HomeTableViewController: UITableViewController {
             for tweet in tweets {
                 self.tweetArray.append(tweet)
             }
-            self.tableView.reloadData()
+            self.homeTableView.reloadData()
             self.myRefreshControl.endRefreshing()
         }, failure: { (Error) in
             print("Could not retrieve tweets!")
@@ -52,7 +54,7 @@ class HomeTableViewController: UITableViewController {
             }
             self.tableView.reloadData()
         }, failure: { (Error) in
-            print("Could not retrieve tweets!")
+            print("Could not retrieve more tweets!")
         })
     }
     
@@ -69,18 +71,33 @@ class HomeTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "tweetCell", for: indexPath) as! TweetTableViewCell
+        let cell = homeTableView.dequeueReusableCell(withIdentifier: "tweetCell", for: indexPath) as! TweetTableViewCell
         
         let user = tweetArray[indexPath.row]["user"] as! NSDictionary
         
-        cell.userNameLabel.text = user["name"] as? String
+        let name = user["name"] as! String
+        let userName = user["screen_name"] as! String
+        
+        //changing the font style of a part of the text in one label
+        let nameFormat: NSString = (name + " @" + userName) as NSString
+        let nameRange = (nameFormat).range(of: name)
+        let usernameRange = (nameFormat).range(of: "@" + userName)
+        let attribute = NSMutableAttributedString.init(string: nameFormat as String)
+        attribute.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.gray , range: usernameRange)
+        attribute.addAttribute(NSAttributedString.Key.font, value: UIFont(name: "HelveticaNeue-Bold", size: 16)!, range: nameRange)
+        cell.userNameLabel.attributedText = attribute
+        
+        
         cell.tweetContentLabel.text = tweetArray[indexPath.row]["text"] as? String
+        
         
         let imageUrl = URL(string: (user["profile_image_url_https"] as? String)!)
         let data = try? Data(contentsOf: imageUrl!)
         
         if let imageData = data {
             cell.profileImageView.image = UIImage(data: imageData)
+            cell.profileImageView.layer.cornerRadius = cell.profileImageView.frame.height/2
+            cell.profileImageView.layer.masksToBounds = true
         }
         
         return cell
@@ -90,12 +107,10 @@ class HomeTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return tweetArray.count
     }
 

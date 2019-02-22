@@ -55,6 +55,22 @@
 			path = ViewControllers;
 			sourceTree = "<group>";
 		};
+		24D7F0F4221CAA02000FA53C /* View */ = {
+			isa = PBXGroup;
+			children = (
+				24D7F0F2221C91E8000FA53C /* TweetTableViewCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		24D7F0F5221CAA6C000FA53C /* API */ = {
+			isa = PBXGroup;
+			children = (
+				6EBCF54321E047A500451C03 /* TwitterAPICaller.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
 		6BFB9ED923EC02A96AB79DEE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -85,14 +101,14 @@
 		6EBCF52421DF07FC00451C03 /* Twitter */ = {
 			isa = PBXGroup;
 			children = (
+				24D7F0F5221CAA6C000FA53C /* API */,
+				24D7F0F4221CAA02000FA53C /* View */,
 				24D7F0EF221BDC32000FA53C /* ViewControllers */,
 				6EBCF54D21E71F9400451C03 /* Launch Screen.storyboard */,
 				6EBCF52921DF07FC00451C03 /* Main.storyboard */,
-				6EBCF54321E047A500451C03 /* TwitterAPICaller.swift */,
 				6EBCF52521DF07FC00451C03 /* AppDelegate.swift */,
 				37D29B8521F90E3400984A88 /* Assets.xcassets */,
 				6EBCF53121DF07FE00451C03 /* Info.plist */,
-				24D7F0F2221C91E8000FA53C /* TweetTableViewCell.swift */,
 			);
 			path = Twitter;
 			sourceTree = "<group>";
