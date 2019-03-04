@@ -64,6 +64,32 @@ class HomeTableViewController: UITableViewController {
         })
     }
     
+    func getRelativeTime(timeString: String) -> String {
+        let now = Date()
+        let time: Date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
+        time = dateFormatter.date(from: timeString)!
+        
+        let secondsAgo = Int(now.timeIntervalSince(time))
+        let minute = 60
+        let hour = 60 * minute
+        let day = 24 * hour
+        let week = 7 * day
+        
+        if secondsAgo < minute {
+            return "\(secondsAgo)s"
+        } else if secondsAgo < hour {
+            return "\(secondsAgo / minute)m"
+        } else if secondsAgo < day {
+            return "\(secondsAgo / hour)h"
+        } else if secondsAgo < week {
+            return "\(secondsAgo / day)d"
+        }
+        
+        return "\(secondsAgo / week)w"
+    }
+    
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row + 1 == tweetArray.count {
             loadMoreTweets()
@@ -83,11 +109,12 @@ class HomeTableViewController: UITableViewController {
         
         let name = user["name"] as! String
         let userName = user["screen_name"] as! String
+        let time = getRelativeTime(timeString: (tweetArray[indexPath.row]["created_at"] as? String)!)
         
         //changing the font style of a part of the text in one label
-        let nameFormat: NSString = (name + " @" + userName) as NSString
+        let nameFormat: NSString = (name + " @" + userName + " •" + time) as NSString
         let nameRange = (nameFormat).range(of: name)
-        let usernameRange = (nameFormat).range(of: "@" + userName)
+        let usernameRange = (nameFormat).range(of: "@" + userName + " • " + time)
         let attribute = NSMutableAttributedString.init(string: nameFormat as String)
         attribute.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.gray , range: usernameRange)
         attribute.addAttribute(NSAttributedString.Key.font, value: UIFont(name: "HelveticaNeue-Bold", size: 16)!, range: nameRange)
