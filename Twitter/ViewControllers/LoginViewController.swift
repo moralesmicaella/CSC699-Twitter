@@ -2,38 +2,43 @@
 //  LoginViewController.swift
 //  Twitter
 //
-//  Created by Micaella Morales on 2/18/19.
-//  Copyright © 2019 Dan. All rights reserved.
+//  Created by Micaella Morales on 2/24/21.
+//  Copyright © 2021 Dan. All rights reserved.
 //
 
 import UIKit
 
 class LoginViewController: UIViewController {
     
-    @IBOutlet weak var logInButton: UIButton!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        logInButton.layer.cornerRadius = 20
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if UserDefaults.standard.bool(forKey: "userLoggedIn") == true {
-            self.performSegue(withIdentifier: "loginToHome", sender: self)
+        if UserDefaults.standard.bool(forKey: "userLoggedIn") {
+            User.setCurrUser { (success) in
+                if success {
+                    self.performSegue(withIdentifier: "loginToHome", sender: self)
+                }
+            }
         }
     }
     
-    @IBAction func tapLoginButton(_ sender: Any) {
-        let myUrl = "https://api.twitter.com/oauth/request_token"
-        TwitterAPICaller.client?.login(url: myUrl, success: {
-            UserDefaults.standard.set(true, forKey: "userLoggedIn")
-            self.performSegue(withIdentifier: "loginToHome", sender: self)
-        }, failure: { (Error) in
-            print("Could not log in")
-        })
+    @IBAction func onLoginButton(_ sender: Any) {
+        User.login { (loggedIn) in
+            if loggedIn {
+                User.setCurrUser { (success) in
+                    if success {
+                        self.performSegue(withIdentifier: "loginToHome", sender: self)
+                    }
+                }
+            }
+        }
+        
     }
+
     
     /*
     // MARK: - Navigation
